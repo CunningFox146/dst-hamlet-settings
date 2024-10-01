@@ -1,7 +1,7 @@
 name = "Hamlet Options"
 description = "Adds options to turn on skill tree and farming in Hamlet"
 author = "CunningFox146"
-version = "1.0.0"
+version = "1.0.1"
 
 forumthread = ""
 
