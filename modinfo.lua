@@ -55,4 +55,15 @@ configuration_options =
 	    default = true,
 	    hover = "Bring back DST recipies and change their ingredients",
 	},
+	
+	{
+	    name = "PICKUP_SOUNDS",
+	    label = "Pickup Sounds",
+	    options = {
+	    	{description = "On", data = true},
+	    	{description = "Off", data = false},
+	    },
+	    default = true,
+	    hover = "Bring back DST pickup sounds",
+	},
 }

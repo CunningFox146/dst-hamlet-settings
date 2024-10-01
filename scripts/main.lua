@@ -3,10 +3,12 @@ local AddRecipePostInit = AddRecipePostInit
 local AddRecipePostInitAny = AddRecipePostInitAny
 local AddPrefabPostInit = AddPrefabPostInit
 local AddSimPostInit = AddSimPostInit
+local AddPlayerPostInit = AddPlayerPostInit
 
 local SKILLTREES_ENABLED = GetModConfigData("SKILLTREE")
 local FARMING_ENABLED = GetModConfigData("FARMING")
 local FIX_RECIPES = GetModConfigData("FIX_RECIPES")
+local PICKUP_SOUNDS = GetModConfigData("PICKUP_SOUNDS")
 
 GLOBAL.setfenv(1, GLOBAL)
 
@@ -312,4 +314,14 @@ if FIX_RECIPES then
     for i, recipe in ipairs(ENABLE_RECIPES) do
         AddRecipePostInit(recipe, enable_recipe)
     end
+end
+
+if PICKUP_SOUNDS then
+    local ORIGINAL_SOUNDS = deepcopy(PICKUPSOUNDS)
+
+    AddPlayerPostInit(function(inst)
+        inst:DoTaskInTime(1, function()
+            PICKUPSOUNDS = ORIGINAL_SOUNDS
+        end)
+    end)
 end
