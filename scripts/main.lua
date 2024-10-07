@@ -95,7 +95,6 @@ if FIX_RECIPES then
         {target = "driftwood_log", ingredient = "cork", ratio = 3},
         {target = "tentaclespots", ingredient = "snakeskin", ratio = 2},
         {target = "turf_marsh", ingredient = "compost", ratio = 2},
-        {target = "oceanfish_small_9_inv", ingredient = "pondfish", ratio = 1},
         {target = "wagpunk_bits", ingredient = "gears", ratio = 2},
         {target = "manrabbit_tail", ingredient = "silk", ratio = 3},
         {target = "slurtleslime", ingredient = "venomgland", ratio = 0.75},
@@ -104,6 +103,7 @@ if FIX_RECIPES then
         --{target = "coontail", ingredient = "snakeskin", ratio = 3},
         {target = "malbatross_beak", ingredient = "hippo_antler", ratio = 2},
         {target = "glommerfuel", ingredient = "nectar_pod", ratio = 10},
+        {target = "oceanfish_small_9_inv", ingredient = "pondfish", ratio = 1},
     }
 
     local function CalculateAmount(amount, ratio)
@@ -318,14 +318,33 @@ if FIX_RECIPES then
     for i, recipe in ipairs(ENABLE_RECIPES) do
         AddRecipePostInit(recipe, enable_recipe)
     end
+
+    local _SpawnPrefabFromSim = SpawnPrefabFromSim
+    SpawnPrefabFromSim = function(name, ...)
+        if name == "coi" then
+            name = "pondfish"
+        end
+        return _SpawnPrefabFromSim(name, ...)
+    end
+
+    AddPrefabPostInit("pondfish", function(inst)
+        inst.AnimState:SetBank("coi")
+        inst.AnimState:SetBuild("coi")
+
+        if inst.components.inventoryitem then
+            inst.components.inventoryitem:ChangeImageName("coi")
+        end
+    end)
 end
 
 if PICKUP_SOUNDS then
     local ORIGINAL_SOUNDS = deepcopy(PICKUPSOUNDS)
 
     AddPlayerPostInit(function(inst)
-        inst:DoTaskInTime(1, function()
-            PICKUPSOUNDS = ORIGINAL_SOUNDS
+        inst:DoTaskInTime(1, function(inst)
+            if inst == ThePlayer then
+                PICKUPSOUNDS = ORIGINAL_SOUNDS
+            end
         end)
     end)
 end
