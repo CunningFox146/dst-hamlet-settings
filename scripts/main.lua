@@ -14,13 +14,17 @@ GLOBAL.setfenv(1, GLOBAL)
 
 local TechTree = require("techtree")
 
-local function ResetPackageMember(package_path, member)
-    local old = package.loaded[package_path]
-
+-- all references to package are still pointing to the old reference
+-- so if we don't to break every file which references those modules
+-- we'll just replace all old member references with re-imported ones
+local function ResetPackageMembers(package_path)
+    local defs = require(package_path)
     package.loaded[package_path] = nil
-    local new = require(package_path)
+    local new_defs = require(package_path)
 
-    old[member] = new[member]
+    for k, v in pairs(defs) do
+        defs[k] = new_defs[k]
+    end
 end
 
 local enable_recipe = function(recipe) recipe.disabled_worlds = nil end
@@ -67,8 +71,8 @@ if FARMING_ENABLED then
 end
 
 if SKILLTREES_ENABLED then
-    ResetPackageMember("prefabs/skilltree_defs", "SKILLTREE_DEFS")
-    ResetPackageMember("widgets/skilltreetoast", "UpdateElements")
+    ResetPackageMembers("prefabs/skilltree_defs")
+    ResetPackageMembers("widgets/skilltreetoast")
 end
 
 if FIX_RECIPES then
